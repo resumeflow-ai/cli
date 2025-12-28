@@ -1,5 +1,5 @@
 """
-REST API client for resumeflow.dev endpoints.
+REST API client for repr.dev endpoints.
 """
 
 import hashlib
@@ -34,7 +34,7 @@ def _get_headers() -> dict[str, str]:
     return {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
-        "User-Agent": "resumeflow-cli/0.1.0",
+        "User-Agent": "repr-cli/0.1.0",
     }
 
 
@@ -45,7 +45,7 @@ def compute_content_hash(content: str) -> str:
 
 async def push_profile(content: str, profile_name: str, analyzed_repos: list[dict[str, Any] | str] | None = None) -> dict[str, Any]:
     """
-    Push a profile to resumeflow.dev.
+    Push a profile to repr.dev.
     
     Args:
         content: Markdown content of the profile
@@ -83,7 +83,7 @@ async def push_profile(content: str, profile_name: str, analyzed_repos: list[dic
             
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 401:
-                raise AuthError("Session expired. Please run 'rf login' again.")
+                raise AuthError("Session expired. Please run 'repr login' again.")
             elif e.response.status_code == 413:
                 raise APIError("Profile too large to upload.")
             else:
@@ -119,7 +119,7 @@ async def get_user_profile() -> dict[str, Any] | None:
             
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 401:
-                raise AuthError("Session expired. Please run 'rf login' again.")
+                raise AuthError("Session expired. Please run 'repr login' again.")
             raise APIError(f"Failed to get profile: {e.response.status_code}")
         except httpx.RequestError as e:
             raise APIError(f"Network error: {str(e)}")
@@ -148,7 +148,7 @@ async def get_user_info() -> dict[str, Any]:
             
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 401:
-                raise AuthError("Session expired. Please run 'rf login' again.")
+                raise AuthError("Session expired. Please run 'repr login' again.")
             raise APIError(f"Failed to get user info: {e.response.status_code}")
         except httpx.RequestError as e:
             raise APIError(f"Network error: {str(e)}")
@@ -177,7 +177,7 @@ async def delete_profile() -> bool:
             
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 401:
-                raise AuthError("Session expired. Please run 'rf login' again.")
+                raise AuthError("Session expired. Please run 'repr login' again.")
             elif e.response.status_code == 404:
                 return True  # Already deleted
             raise APIError(f"Failed to delete profile: {e.response.status_code}")
@@ -191,7 +191,7 @@ async def push_repo_profile(
     repo_metadata: dict[str, Any],
 ) -> dict[str, Any]:
     """
-    Push a single repository profile to resumeflow.dev.
+    Push a single repository profile to repr.dev.
     
     Args:
         content: Markdown content of the profile
@@ -227,7 +227,7 @@ async def push_repo_profile(
             
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 401:
-                raise AuthError("Session expired. Please run 'rf login' again.")
+                raise AuthError("Session expired. Please run 'repr login' again.")
             elif e.response.status_code == 413:
                 raise APIError("Profile too large to upload.")
             else:
@@ -261,4 +261,3 @@ def sync_get_user_info() -> dict[str, Any]:
     """
     import asyncio
     return asyncio.run(get_user_info())
-

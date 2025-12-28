@@ -1,5 +1,5 @@
 """
-Configuration management for ~/.resumeflow/ directory.
+Configuration management for ~/.repr/ directory.
 """
 
 import json
@@ -13,10 +13,10 @@ from typing import Any
 # ============================================================================
 
 # Environment detection
-_DEV_MODE = os.getenv("RESUMEFLOW_DEV", "").lower() in ("1", "true", "yes")
+_DEV_MODE = os.getenv("REPR_DEV", "").lower() in ("1", "true", "yes")
 
 # Production URLs
-PROD_API_BASE = "https://api.resumeflow.dev/api/cli"
+PROD_API_BASE = "https://api.repr.dev/api/cli"
 
 # Local development URLs
 LOCAL_API_BASE = "http://localhost:8003/api/cli"
@@ -24,7 +24,7 @@ LOCAL_API_BASE = "http://localhost:8003/api/cli"
 
 def get_api_base() -> str:
     """Get the API base URL based on environment."""
-    if env_url := os.getenv("RESUMEFLOW_API_BASE"):
+    if env_url := os.getenv("REPR_API_BASE"):
         return env_url
     return LOCAL_API_BASE if _DEV_MODE else PROD_API_BASE
 
@@ -44,7 +44,7 @@ def set_dev_mode(enabled: bool) -> None:
 # File Configuration
 # ============================================================================
 
-CONFIG_DIR = Path.home() / ".resumeflow"
+CONFIG_DIR = Path.home() / ".repr"
 CONFIG_FILE = CONFIG_DIR / "config.json"
 PROFILES_DIR = CONFIG_DIR / "profiles"
 CACHE_DIR = CONFIG_DIR / "cache"
@@ -390,4 +390,3 @@ def clear_cache() -> None:
     """Clear all cached data."""
     if REPO_HASHES_FILE.exists():
         REPO_HASHES_FILE.unlink()
-

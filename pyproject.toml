@@ -3,13 +3,13 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "resumeflow"
+name = "repr-cli"
 version = "0.1.0"
 description = "A beautiful, privacy-first CLI that analyzes your code repositories and generates a compelling developer profile"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    {name = "ResumeFlow", email = "hello@resumeflow.dev"}
+    {name = "Repr", email = "hello@repr.dev"}
 ]
 requires-python = ">=3.10"
 classifiers = [
@@ -24,7 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Version Control :: Git",
 ]
-keywords = ["cli", "developer", "profile", "git", "analysis"]
+keywords = ["cli", "developer", "profile", "git", "analysis", "repr"]
 dependencies = [
     "typer>=0.9.0",
     "rich>=13.0.0",
@@ -43,16 +43,16 @@ dev = [
 ]
 
 [project.scripts]
-rf = "resumeflow.cli:app"
+repr = "repr.cli:app"
 
 [project.urls]
-Homepage = "https://resumeflow.dev"
-Documentation = "https://resumeflow.dev/docs"
-Repository = "https://github.com/resumeflow-ai/cli"
+Homepage = "https://repr.dev"
+Documentation = "https://repr.dev/docs"
+Repository = "https://github.com/repr-app/cli"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["resumeflow*"]
+include = ["repr*"]
 
 [tool.black]
 line-length = 100
@@ -62,4 +62,3 @@ target-version = ["py310"]
 line-length = 100
 target-version = "py310"
 select = ["E", "F", "I", "N", "W"]
-

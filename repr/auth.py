@@ -61,7 +61,7 @@ async def request_device_code() -> DeviceCodeResponse:
         try:
             response = await client.post(
                 _get_device_code_url(),
-                json={"client_id": "resumeflow-cli"},
+                json={"client_id": "repr-cli"},
                 timeout=30,
             )
             response.raise_for_status()
@@ -70,7 +70,7 @@ async def request_device_code() -> DeviceCodeResponse:
             return DeviceCodeResponse(
                 device_code=data["device_code"],
                 user_code=data["user_code"],
-                verification_url=data.get("verification_url", "https://resumeflow.dev/device"),
+                verification_url=data.get("verification_url", "https://repr.dev/device"),
                 expires_in=data.get("expires_in", 600),
                 interval=data.get("interval", 5),
             )
@@ -103,7 +103,7 @@ async def poll_for_token(device_code: str, interval: int = POLL_INTERVAL) -> Tok
                     _get_token_url(),
                     json={
                         "device_code": device_code,
-                        "client_id": "resumeflow-cli",
+                        "client_id": "repr-cli",
                     },
                     timeout=30,
                 )
@@ -189,7 +189,7 @@ def require_auth() -> str:
     """
     auth = get_auth()
     if not auth or not auth.get("access_token"):
-        raise AuthError("Not authenticated. Run 'rf login' first.")
+        raise AuthError("Not authenticated. Run 'repr login' first.")
     return auth["access_token"]
 
 
@@ -249,7 +249,7 @@ class AuthFlow:
                             _get_token_url(),
                             json={
                                 "device_code": device_code_response.device_code,
-                                "client_id": "resumeflow-cli",
+                                "client_id": "repr-cli",
                             },
                             timeout=30,
                         )
@@ -298,4 +298,3 @@ class AuthFlow:
             if self.on_error:
                 self.on_error(e)
             raise
-
