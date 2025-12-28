@@ -154,6 +154,11 @@ def analyze(
         "--offline",
         help="Stats only, no AI analysis (no push).",
     ),
+    min_commits: int = typer.Option(
+        10,
+        "--min-commits",
+        help="Minimum number of commits required.",
+    ),
 ):
     """
     Analyze repositories and generate profiles (one per repo).
@@ -183,9 +188,9 @@ def analyze(
             raise typer.Exit(1)
     
     if mode == "openai":
-        litellm_url, litellm_key = get_litellm_config()
-        if not litellm_key or not litellm_url:
-            print_error("LiteLLM not configured. Please run 'rf login' first.")
+        _, litellm_key = get_litellm_config()
+        if not litellm_key:
+            print_error("Not authenticated for LLM access. Please run 'rf login' first.")
             raise typer.Exit(1)
     
     if mode == "local":
@@ -205,11 +210,11 @@ def analyze(
     
     with create_simple_progress() as progress:
         task = progress.add_task("Scanning directories...", total=None)
-        repos = discover_repos(root_paths=paths, use_cache=not no_cache)
+        repos = discover_repos(root_paths=paths, use_cache=not no_cache, min_commits=min_commits)
     
     if not repos:
         print_warning("No repositories found in the specified paths.")
-        print_info("Make sure the paths contain git repositories with at least 10 commits.")
+        print_info(f"Make sure the paths contain git repositories with at least {min_commits} commits.")
         raise typer.Exit(1)
     
     total_paths = sum(1 for p in paths)
@@ -745,11 +750,10 @@ def show_config():
     console.print(f"  Local API Key: {'[green]✓ set[/]' if llm_config['local_api_key'] else '[dim]not set[/]'}")
     console.print()
     
-    # LiteLLM Configuration (for cloud mode)
-    litellm_url, litellm_key = get_litellm_config()
-    console.print("[bold]LiteLLM Configuration (cloud mode):[/]")
-    console.print(f"  LiteLLM URL:   {litellm_url or '[dim]not set[/]'}")
-    console.print(f"  LiteLLM Key:   {'[green]✓ set[/]' if litellm_key else '[dim]not set[/]'}")
+    # Cloud LLM Access (authenticated via backend)
+    _, litellm_key = get_litellm_config()
+    console.print("[bold]Cloud LLM Access:[/]")
+    console.print(f"  Status:  {'[green]✓ authenticated[/]' if litellm_key else '[dim]not authenticated - run rf login[/]'}")
     console.print()
     
     console.print(f"  Config:   {CONFIG_DIR / 'config.json'}")

@@ -39,8 +39,7 @@ class TokenResponse:
     access_token: str
     user_id: str
     email: str
-    litellm_url: str | None = None
-    litellm_api_key: str | None = None
+    litellm_api_key: str | None = None  # rf_* token for LLM proxy authentication
 
 
 class AuthError(Exception):
@@ -115,7 +114,6 @@ async def poll_for_token(device_code: str, interval: int = POLL_INTERVAL) -> Tok
                         access_token=data["access_token"],
                         user_id=data["user_id"],
                         email=data["email"],
-                        litellm_url=data.get("litellm_url"),
                         litellm_api_key=data.get("litellm_api_key"),
                     )
                 
@@ -160,7 +158,6 @@ def save_token(token_response: TokenResponse) -> None:
         access_token=token_response.access_token,
         user_id=token_response.user_id,
         email=token_response.email,
-        litellm_url=token_response.litellm_url,
         litellm_api_key=token_response.litellm_api_key,
     )
 
@@ -264,7 +261,6 @@ class AuthFlow:
                                 access_token=data["access_token"],
                                 user_id=user_data.get("id", ""),
                                 email=user_data.get("email", ""),
-                                litellm_url=data.get("litellm_url"),
                                 litellm_api_key=data.get("litellm_api_key"),
                             )
                             save_token(token)

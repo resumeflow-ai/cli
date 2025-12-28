@@ -112,7 +112,6 @@ def set_auth(
     access_token: str,
     user_id: str,
     email: str,
-    litellm_url: str | None = None,
     litellm_api_key: str | None = None,
 ) -> None:
     """Store authentication info."""
@@ -123,8 +122,6 @@ def set_auth(
         "email": email,
         "authenticated_at": datetime.now().isoformat(),
     }
-    if litellm_url:
-        config["auth"]["litellm_url"] = litellm_url
     if litellm_api_key:
         config["auth"]["litellm_api_key"] = litellm_api_key
     save_config(config)

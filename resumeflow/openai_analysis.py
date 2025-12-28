@@ -14,7 +14,7 @@ from openai import AsyncOpenAI
 
 from .tools import get_commits_with_diffs
 from .discovery import RepoInfo
-from .config import get_litellm_config, get_llm_config
+from .config import get_litellm_config, get_llm_config, get_api_base
 
 
 # Model configuration (defaults for OpenAI)
@@ -27,11 +27,11 @@ COMMITS_PER_BATCH = 25
 
 def get_openai_client(api_key: str = None, base_url: str = None) -> AsyncOpenAI:
     """
-    Get OpenAI-compatible client using stored LiteLLM credentials.
+    Get OpenAI-compatible client that proxies through our backend.
     
     Args:
-        api_key: API key (optional, overrides stored credentials)
-        base_url: Base URL for API (optional, overrides stored credentials)
+        api_key: API key (optional, for local LLM mode)
+        base_url: Base URL for API (optional, for local LLM mode)
     
     Returns:
         AsyncOpenAI client
@@ -43,14 +43,18 @@ def get_openai_client(api_key: str = None, base_url: str = None) -> AsyncOpenAI:
             kwargs["base_url"] = base_url
         return AsyncOpenAI(**kwargs)
     
-    # Use stored LiteLLM credentials from config.json
-    litellm_url, litellm_key = get_litellm_config()
-    if not litellm_key or not litellm_url:
+    # Use our backend as the proxy - it will forward to LiteLLM
+    # The rf_* token is used to authenticate with our backend
+    _, litellm_key = get_litellm_config()
+    if not litellm_key:
         raise ValueError("Not logged in. Please run 'rf login' first.")
+    
+    # Point to our backend's LLM proxy endpoint
+    backend_url = get_api_base().replace("/api/cli", "")
     
     return AsyncOpenAI(
         api_key=litellm_key,
-        base_url=f"{litellm_url}/v1"
+        base_url=f"{backend_url}/api/llm/v1"
     )
 
 
